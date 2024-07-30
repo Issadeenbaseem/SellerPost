@@ -1,6 +1,6 @@
-const errorHandle = (statusCode,massage) =>{
+export const errorHandler = (statusCode, message) => {
         const error = new Error();
         error.statusCode = statusCode;
-        error.massage = massage;
+        error.message = message;
         return error;
-}
+      };
