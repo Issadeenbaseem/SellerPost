@@ -10,9 +10,9 @@ export const signUp = async (req, res, next) => {
 
   try {
     await newUser.save();
-    res.status(201).json("user create successfully ...");
+    res.status(201).json("User created successfully...");
   } catch (err) {
-    next(err);
+    next(errorHandler(500, err.message));
   }
 };
 
@@ -20,18 +20,19 @@ export const signIn = async (req, res, next) => {
   const { email, password } = req.body;
   try {
     const validUser = await User.findOne({ email });
-    if (!validUser) return errorHandler("402", "User not found..");
+    if (!validUser) return next(errorHandler(402, "User not found."));
+
     const validPassword = bcrypt.compareSync(password, validUser.password);
-    if (!validPassword) return errorHandler("401", "Wrong Password..");
+    if (!validPassword) return next(errorHandler(401, "Wrong password."));
+
     const token = jwt.sign({ id: validUser._id }, process.env.JWT_KEY);
-    const {password:pass, ...rest} = validUser._doc;//rename property
-    
+    const { password: pass, ...rest } = validUser._doc; // Rename property
 
     res
       .cookie("access_token", token, { httpOnly: true })
       .status(200)
       .json(rest);
   } catch (error) {
-    next(error)
+    next(errorHandler(500, error.message));
   }
 };
