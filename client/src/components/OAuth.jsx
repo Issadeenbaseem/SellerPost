@@ -3,9 +3,14 @@ import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth';
 import { app } from '../firebase'; // Make sure the path to your firebase.js file is correct
 import { useDispatch } from 'react-redux';
 import { signInSuccess } from '../redux/user/userSlice.js';
+import {useNavigate} from 'react-router-dom'
+
+
+
 
 const OAuth = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
 
   const handleGoogleClick = async () => {
     try {
@@ -25,6 +30,7 @@ const OAuth = () => {
       });
       const data = await res.json();
       dispatch(signInSuccess(data));
+      navigate('/profile')
     } catch (error) {
       console.error('Error during sign-in:', error.message);
     }

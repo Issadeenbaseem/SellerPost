@@ -33,7 +33,7 @@ export const SignIn = () => {
       if (res.ok) {
         const data = await res.json();
         dispatch(signInSuccess(data))
-        navigate('/');
+        navigate('/profile');
       } else {
         const errorData = await res.json();
         console.error('Sign-in failed:', errorData.message);
