@@ -1,6 +1,6 @@
-export const errorHandler = (statusCode, message) => {
-        const error = new Error();
-        error.statusCode = statusCode;
-        error.message = message;
-        return error;
-      };
+// /Users/baseem/Desktop/RealWorld-project/api/utils/error.js
+export const errorHandler = (status, message) => {
+  const error = new Error(message);
+  error.status = status;
+  return error;
+};
