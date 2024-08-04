@@ -14,6 +14,9 @@ import {
   deleteUserStart,
   deleteUserFailure,
   deleteUserSuccess,
+  signOutUserStart,
+  signOutUserFailure,
+  signOutUserSuccess,
 } from "../redux/user/userSlice.js";
 
 const Profile = () => {
@@ -110,23 +113,21 @@ const Profile = () => {
     }
   };
 
-  const handleDeleteUser = async () => {
+  const handleSignOut = async() =>{
     try {
-      dispatch(deleteUserStart());
-      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
-        method: 'DELETE',
-      });
-      const data = await res.json();
-      if (data.success === false) {
-        dispatch(deleteUserFailure(data.message));
+      dispatch(signOutUserStart());
+      const res = await fetch('/api/auth/signOut');
+      const data = res.json();
+      if(data.success === false)
+      {
+        dispatch(signOutUserFailure(data.message));
         return;
       }
-      dispatch(deleteUserSuccess(data));
+      dispatch(signOutUserSuccess(data))
     } catch (error) {
-      dispatch(deleteUserFailure(error.message));
+      dispatch(signOutUserFailure(data.message));
     }
-  };
-  
+  }
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -191,7 +192,7 @@ const Profile = () => {
           <span className="text-red-500 cursor-pointer" onClick={handleDelete}>
             Delete
           </span>
-          <span className="text-red-500 cursor-pointer"> Sign Out</span>
+          <span className="text-red-500 cursor-pointer" onClick={handleSignOut}> Sign Out</span>
         </div>
         <p className="text-green-700">{error ? error : ""}</p>
         <p className="text-green-700">

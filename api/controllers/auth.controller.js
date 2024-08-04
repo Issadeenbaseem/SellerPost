@@ -1,7 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 export const signUp = async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -48,13 +48,17 @@ export const google = async (req, res, next) => {
         .status(200)
         .json(rest);
     } else {
-      const generatePassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+      const generatePassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
       const hashPassword = bcrypt.hashSync(generatePassword, 10);
       const newUser = new User({
-        username: req.body.name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4),
+        username:
+          req.body.name.split(" ").join("").toLowerCase() +
+          Math.random().toString(36).slice(-4),
         email: req.body.email,
         password: hashPassword,
-        avatar: req.body.photoURL
+        avatar: req.body.photoURL,
       });
 
       await newUser.save();
@@ -66,6 +70,15 @@ export const google = async (req, res, next) => {
         .status(200)
         .json(rest);
     }
+  } catch (error) {
+    next(errorHandler(500, error.message));
+  }
+};
+
+export const signOut = (res, req, next) => {
+  try {
+    res.clearCookie("access_token");
+    res.status(200, "User Sign Out Successfully ...");
   } catch (error) {
     next(errorHandler(500, error.message));
   }

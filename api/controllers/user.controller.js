@@ -53,7 +53,8 @@ export const userDelete = async (req, res, next) => {
     }
 
     console.log('User deleted successfully:', deletedUser);
-    res.status(200).json("User deleted successfully.");
+    res.clearCookie('access_token');
+    res.status(200).json("User deleted successfully.")
   } catch (error) {
     console.error('Error deleting user:', error);
     next(error);
