@@ -18,6 +18,7 @@ import {
   signOutUserFailure,
   signOutUserSuccess,
 } from "../redux/user/userSlice.js";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -188,6 +189,7 @@ const Profile = () => {
         >
           {loading ? "Loading.." : "Update"}
         </button>
+        <Link to={'/create-listing'} className="bg-green-700 p-3 text-white text-center rounded-lg uppercase hover:opacity-95">Create List</Link>
         <div className="flex justify-between">
           <span className="text-red-500 cursor-pointer" onClick={handleDelete}>
             Delete
