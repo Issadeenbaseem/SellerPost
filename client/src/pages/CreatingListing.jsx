@@ -25,7 +25,7 @@ const CreatingListing = () => {
     type: "rent",
     offer: false,
     imageUrl: [],
-    userRef: currentUser.username,
+   
   });
   const [imageUploadError, setImageUploadError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -139,7 +139,7 @@ const CreatingListing = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({...formData,userRef:currentUser._id}),
       });
 
       const data = await res.json();
