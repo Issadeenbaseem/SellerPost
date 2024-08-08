@@ -277,7 +277,7 @@ const Profile = () => {
               </Link>
 
               <div className="flex gap-3">
-                <Link to={"/edit"} className="text-green-700">
+                <Link to={`/edit-listing/${list._id}`} className="text-green-700">
                   Edit
                 </Link>
                 <button
