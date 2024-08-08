@@ -28,7 +28,7 @@ const Profile = () => {
   const [fileError, setFileError] = useState(false);
   const [formData, setFormData] = useState({});
   const [updateState, setUpdateState] = useState(false);
-  const [list,setList] = useState([])
+  const [list, setList] = useState([]);
 
   const [listingError, setListingError] = useState(false);
   // console.log(formData);
@@ -132,15 +132,15 @@ const Profile = () => {
     }
   };
 
-  const handleShowListing = async () => {
+  const handleShowListing = async (e) => {
     try {
       setListingError(true);
       const res = await fetch(`/api/user/userListings/${currentUser._id}`);
 
       const data = await res.json();
-      
-      setList(data)
-    
+
+      setList(data);
+
       if (data.status === 304) {
         setFileError(false);
       } else {
@@ -151,6 +151,23 @@ const Profile = () => {
     } catch (error) {
       setListingError(error);
     }
+  };
+
+  const handleListDelete = async (listId) => {
+     try {
+
+      const res = await fetch(`/api/listing/delete/${listId}`, {
+        method: 'DELETE',
+      });
+
+      const data =  await  res.json()
+      console.log(data)
+
+      setList((e)=>(e.filter((listing)=>listing._id !== listId )))
+      
+     } catch (error) {
+      
+     }
   };
 
   return (
@@ -239,24 +256,39 @@ const Profile = () => {
         >
           Show User Listings
         </p>
-        
-        {list && list.length > 0 && list.map(
-          (list)=>(
-            <Link to={`/listing/${currentUser._id}`}>
-             <div className="border p-3 rounded-lg shadow-lg flex justify-around items-center" key={list._id}>
-              <img className="h-20 w-20 object-cover"  src={list.imageUrl[0]} />
-              <p className=" font-semibold  ">{list.name}</p>
+
+        {list &&
+          list.length > 0 &&
+          list.map((list) => (
+            <div
+              className="border p-3 rounded-lg shadow-lg flex justify-around items-center"
+              key={list._id}
+            >
+              <Link to={`/listing/${currentUser._id}`}>
+                {" "}
+                <div className="flex items-center gap-10">
+                <img
+                  className="h-20 w-20 object-cover"
+                  src={list.imageUrl[0]}
+                />
+                <p className="font-semibold ">{list.name}</p>
+                </div>
+               
+              </Link>
+
               <div className="flex gap-3">
-                <Link to={'/edit'}  className="text-green-700">Edit</Link>
-                <Link to={'/delete'} className="text-red-700">Delete</Link>
+                <Link to={"/edit"} className="text-green-700">
+                  Edit
+                </Link>
+                <button
+                  onClick={() => handleListDelete(list._id)}
+                  className="text-red-700"
+                >
+                  Delete
+                </button>
               </div>
             </div>
-            </Link>
-           
-          )
-        )}
-
-
+          ))}
       </form>
     </div>
   );
