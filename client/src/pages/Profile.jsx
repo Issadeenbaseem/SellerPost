@@ -28,6 +28,9 @@ const Profile = () => {
   const [fileError, setFileError] = useState(false);
   const [formData, setFormData] = useState({});
   const [updateState, setUpdateState] = useState(false);
+  const [list,setList] = useState([])
+
+  const [listingError, setListingError] = useState(false);
   // console.log(formData);
   const dispatch = useDispatch();
 
@@ -106,29 +109,49 @@ const Profile = () => {
         dispatch(deleteUserFailure(data.message));
         return;
       }
-      console.log('Delete successful:', data); // Log success for debugging
+      console.log("Delete successful:", data); // Log success for debugging
       dispatch(deleteUserSuccess(data));
     } catch (error) {
-      console.error('Delete error:', error.message); // Log error for debugging
+      console.error("Delete error:", error.message); // Log error for debugging
       dispatch(deleteUserFailure(error.message));
     }
   };
 
-  const handleSignOut = async() =>{
+  const handleSignOut = async () => {
     try {
       dispatch(signOutUserStart());
-      const res = await fetch('/api/auth/signOut');
+      const res = await fetch("/api/auth/signOut");
       const data = res.json();
-      if(data.success === false)
-      {
+      if (data.success === false) {
         dispatch(signOutUserFailure(data.message));
         return;
       }
-      dispatch(signOutUserSuccess(data))
+      dispatch(signOutUserSuccess(data));
     } catch (error) {
       dispatch(signOutUserFailure(data.message));
     }
-  }
+  };
+
+  const handleShowListing = async () => {
+    try {
+      setListingError(true);
+      const res = await fetch(`/api/user/userListings/${currentUser._id}`);
+
+      const data = await res.json();
+      
+      setList(data)
+    
+      if (data.status === 304) {
+        setFileError(false);
+      } else {
+        setListingError(data.message);
+      }
+
+      setFileError(false);
+    } catch (error) {
+      setListingError(error);
+    }
+  };
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -189,17 +212,51 @@ const Profile = () => {
         >
           {loading ? "Loading.." : "Update"}
         </button>
-        <Link to={'/create-listing'} className="bg-green-700 p-3 text-white text-center rounded-lg uppercase hover:opacity-95">Create List</Link>
+        <Link
+          to={"/create-listing"}
+          className="bg-green-700 p-3 text-white text-center rounded-lg uppercase hover:opacity-95"
+        >
+          Create List
+        </Link>
         <div className="flex justify-between">
           <span className="text-red-500 cursor-pointer" onClick={handleDelete}>
             Delete
           </span>
-          <span className="text-red-500 cursor-pointer" onClick={handleSignOut}> Sign Out</span>
+          <span className="text-red-500 cursor-pointer" onClick={handleSignOut}>
+            {" "}
+            Sign Out
+          </span>
         </div>
         <p className="text-green-700">{error ? error : ""}</p>
         <p className="text-green-700">
           {updateState ? "Updated Success Fully .... " : ""}
         </p>
+        <p className="text-green-700 w-full text-center ">{listingError}</p>
+
+        <p
+          className="text-green-700 w-full text-center cursor-pointer"
+          onClick={handleShowListing}
+        >
+          Show User Listings
+        </p>
+        
+        {list && list.length > 0 && list.map(
+          (list)=>(
+            <Link to={`/listing/${currentUser._id}`}>
+             <div className="border p-3 rounded-lg shadow-lg flex justify-around items-center" key={list._id}>
+              <img className="h-20 w-20 object-cover"  src={list.imageUrl[0]} />
+              <p className=" font-semibold  ">{list.name}</p>
+              <div className="flex gap-3">
+                <Link to={'/edit'}  className="text-green-700">Edit</Link>
+                <Link to={'/delete'} className="text-red-700">Delete</Link>
+              </div>
+            </div>
+            </Link>
+           
+          )
+        )}
+
+
       </form>
     </div>
   );
