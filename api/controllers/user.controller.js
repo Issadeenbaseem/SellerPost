@@ -10,15 +10,16 @@ export const test = (req, res) => {
 };
 
 export const userUpdate = async (req, res, next) => {
-  if (req.user.id !== req.params.id)
-    return next(errorHandler(403, "You can update your own account only ...."));
+  if (req.user.id !== req.params.id) {
+    return next(errorHandler(403, "You can update only your own account."));
+  }
 
   try {
     if (req.body.password) {
       req.body.password = bcrypt.hashSync(req.body.password, 10);
     }
 
-    const userUpdate = await User.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
       {
         $set: {
@@ -31,7 +32,11 @@ export const userUpdate = async (req, res, next) => {
       { new: true }
     );
 
-    const { password, ...rest } = userUpdate._doc;
+    if (!updatedUser) {
+      return next(errorHandler(404, "User not found."));
+    }
+
+    const { password, ...rest } = updatedUser._doc;
 
     res.status(200).json(rest);
   } catch (error) {
@@ -40,35 +45,59 @@ export const userUpdate = async (req, res, next) => {
 };
 
 export const userDelete = async (req, res, next) => {
-  console.log('Delete request received for user:', req.params.id);
-  
+  console.log("Delete request received for user:", req.params.id);
+
   if (req.user.id !== req.params.id) {
-    return next(new Error("You can only delete your own account."));
+    return next(errorHandler(403, "You can only delete your own account."));
   }
-  
+
   try {
     const deletedUser = await User.findByIdAndDelete(req.params.id);
-    
+
     if (!deletedUser) {
-      return next(new Error("User not found."));
+      return next(errorHandler(404, "User not found."));
     }
 
-    console.log('User deleted successfully:', deletedUser);
-    res.clearCookie('access_token');
-    res.status(200).json("User deleted successfully.")
+    console.log("User deleted successfully:", deletedUser);
+    res.clearCookie("access_token");
+    res.status(200).json("User deleted successfully.");
   } catch (error) {
-    console.error('Error deleting user:', error);
+    console.error("Error deleting user:", error);
     next(error);
   }
 };
 
-export const userListings = async (req,res,next) =>{
-    
-   if(req.user.id == req.params.id){
-        const listings = await Listing.find({userRef:req.params.id});
-        res.status(200).json(listings)
-   }else{
-    return next(errorHandler(401,'You can only check you own account ..'))
-   }
+export const userListings = async (req, res, next) => {
+  if (req.user.id === req.params.id) {
+    try {
+      const listings = await Listing.find({ userRef: req.params.id });
+      res.status(200).json(listings);
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    return next(errorHandler(401, "You can only view your own listings."));
+  }
+};
 
-}
+export const userListDeleting = async (req, res, next) => {
+  try {
+    const listing = await Listing.findById(req.params.id);
+
+
+
+    if (!listing) {
+      return next(errorHandler(404, "Listing not found."));
+    }
+
+    if (req.user.id !== listing.userRef) {
+      return next(errorHandler(403, "You can only delete your own listings."));
+    }
+
+    await Listing.findByIdAndDelete(req.params.id);
+    res.status(200).json("Listing deleted successfully.");
+
+  } catch (error) {
+    next(error);
+  }
+};
