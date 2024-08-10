@@ -101,3 +101,14 @@ export const userListDeleting = async (req, res, next) => {
     next(error);
   }
 };
+export const getListingOwner = async (req, res, next) => {
+  try {
+    const Owner = await User.findById(req.params.id);
+
+    const { password: pass, ...rest } = Owner._doc;
+
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
