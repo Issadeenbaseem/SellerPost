@@ -4,6 +4,7 @@ import SwiperCore from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css/bundle";
+import { useSelector } from "react-redux";
 import {  FaBath,
     FaBed,
     FaChair,
@@ -11,12 +12,20 @@ import {  FaBath,
     FaMapMarkerAlt,
     FaParking,
     FaShare, } from "react-icons/fa";
+import { set } from "mongoose";
+import ContactForm from "../components/ContactForm";
 
 const Listing = () => {
   const param = useParams();
   const [list, setList] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [messageClick ,setMessageClick] = useState(false)
+ 
+  const {currentUser} = useSelector((state)=>state.user);
+
+
+  console.log(currentUser._id)
 
   useEffect(() => {
     SwiperCore.use([Navigation]);
@@ -69,7 +78,7 @@ const Listing = () => {
         </Swiper>
       )}
 
-      <div className="max-w-4xl mt-9 mx-auto flex flex-col ">
+      <div className="max-w-4xl mt-9 mx-auto flex flex-col gap-3 ">
         <p className="text-2xl font-semibold">
           {list.name} - $ {list.offer ? list.discountPrice : list.regularPrice}
           {list.type === "rent" && " / month"}
@@ -92,7 +101,7 @@ const Listing = () => {
               <span className='font-semibold text-black'>Description - </span>
               {list.description}
             </p>
-            <ul className='text-green-900 font-semibold text-sm flex flex-wrap items-center gap-4 sm:gap-6  mt-6 mb-6'>
+            <ul className='text-green-900 font-semibold text-sm flex flex-wrap items-center gap-4 sm:gap-6  mb-5'>
               <li className='flex items-center gap-1 whitespace-nowrap '>
                 <FaBed className='text-lg' />
                 {list.bedrooms > 1
@@ -114,6 +123,22 @@ const Listing = () => {
                 {list.furnished ? 'Furnished' : 'Unfurnished'}
               </li>
             </ul>
+            {
+                currentUser && currentUser._id !== list.userRef && !messageClick &&(
+                    <button className="bg-slate-700 text-white p-3 rounded-lg mb-5 hover:opacity-85" onClick={()=>setMessageClick(true)}>Sent Message to land Owner </button>
+                )
+            }
+
+            {
+                currentUser && messageClick&&(
+                    <>
+                       <ContactForm listing={list}/>
+                    </>
+                )
+            }
+
+
+
       </div>
       
     </main>
