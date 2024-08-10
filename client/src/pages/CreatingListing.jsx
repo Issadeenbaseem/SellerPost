@@ -293,7 +293,7 @@ const CreatingListing = () => {
                   type="number"
                   className="rounded-lg border p-2"
                   max={100000000}
-                  min={50}
+                  min={0}
                   id="discountPrice"
                   onChange={handleChange}
                   value={formData.discountPrice}
