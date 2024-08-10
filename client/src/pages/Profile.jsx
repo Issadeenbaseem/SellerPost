@@ -264,7 +264,7 @@ const Profile = () => {
               className="border p-3 rounded-lg shadow-lg flex justify-around items-center"
               key={list._id}
             >
-              <Link to={`/listing/${currentUser._id}`}>
+              <Link to={`/listing/${list._id}`}>
                 {" "}
                 <div className="flex items-center gap-10">
                 <img
@@ -277,7 +277,7 @@ const Profile = () => {
               </Link>
 
               <div className="flex gap-3">
-                <Link to={"/edit"} className="text-green-700">
+                <Link to={`/edit-listing/${list._id}`} className="text-green-700">
                   Edit
                 </Link>
                 <button
