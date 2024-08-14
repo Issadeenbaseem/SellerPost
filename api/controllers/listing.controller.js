@@ -93,8 +93,7 @@ export const userListFinds  =async (req,res,next) =>{
       .skip(startIndex);
 
     return res.status(200).json(listings);
-    
-    console.log(res.status(200).json(listings))
+
   } catch (error) {
     next(error);
   }
