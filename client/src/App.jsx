@@ -1,5 +1,3 @@
-//import { useState } from 'react'
-
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Home from "./pages/Home";
 import { SignIn } from "./pages/SignIn";
@@ -11,6 +9,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import CreatingListing from "./pages/CreatingListing";
 import UpdateListing from "./pages/UpdateListing";
 import Listing from "./pages/Listing";
+import Search from "./pages/Search"; // Updated import
 
 function App() {
   return (
@@ -22,7 +21,8 @@ function App() {
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/about" element={<About />} />
-          <Route path="/listing/:id" element={<Listing/>} />
+          <Route path="/search" element={<Search />} /> {/* Corrected route */}
+          <Route path="/listing/:id" element={<Listing />} />
           <Route element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/create-listing" element={<CreatingListing />} />
