@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ListingItems from "./ListingItems";
 
 const Search = () => {
   const navigate = useNavigate();
   const [loading,setLoading] =useState(false)
-  const [listing,setListing] = useState({})
+  const [listing,setListing] = useState([])
 
 console.log(listing)
 
@@ -197,7 +198,19 @@ console.log(listing)
           Listing results:
         </h1>
         <div className="p-7 flex flex-wrap gap-4">
-          {/* Listing items go here */}
+            {loading && <>
+                <h3 className="text-center text-slate-700 font-semibold"> Loading........</h3>
+
+            </>}
+         
+         {!loading && listing.length === 0 && <>
+           
+        <h3 className="text-center text-slate-700 font-semibold"> Listing not Found........</h3>
+          
+         </>}
+         {!loading && listing && listing.map((e)=>(
+                        <ListingItems key={e._id} props={e}/>
+         ))}
         </div>
       </div>
     </div>
